@@ -13,6 +13,7 @@ namespace Core
             this.Areas = areas;
             this.Players = players;
             this.BankBalance = 0;
+            this.ProgressResults = this.ProgressResults ?? new List<ProgressResults>();
         }
 
         public ICollection<Area> Areas { get; set; }
@@ -25,54 +26,50 @@ namespace Core
 
         public bool IsGameStarted { get; set; }
 
+        public ICollection<ProgressResults> ProgressResults { get; set; }
+
         public void Start()
         {
             this.IsGameStarted = true;
         }
 
-        public ProgressResults Play()
+        public ICollection<ProgressResults> GetProgress()
         {
-            var result = new ProgressResults();
+            return this.ProgressResults;
+        }
+
+        public void Play(bool isGameStarted = false)
+        {
+            this.ProgressResults.Clear();
 
             var ruleEngine = new RuleEngine();
-
             foreach (var player in this.Players)
             {
-                if(player.Id == this.CurrentPlayer.Id)
+                var progress = new ProgressResults();
+
+                if(isGameStarted)
                 {
-                    continue;
+                    player.CastCubes();
                 }
 
                 this.CurrentPlayer = player;
                 var area = player.MoveTo(this.Areas);
-                ruleEngine.Calculate(area, player);
 
-                result.PlayerType = player.PlayerType.ToString();
-                result.WalletBalance = player.WalletBalance;
-                result.CurrentSteps = player.CurrentSteps;
+                string calculateResult = ruleEngine.Calculate(area, player);
+                progress.Message = calculateResult;
+
+                progress.PlayerType = player.PlayerType.ToString();
+                progress.WalletBalance = player.WalletBalance;
+                progress.CurrentSteps = player.CurrentSteps;
+                progress.AreaName = area.Name;
+
+                this.ProgressResults.Add(progress);
             }
-
-            return result;
         }
 
         public void Pause()
         {
             this.IsGameStarted = false;
-        }
-
-        public void NextPlayer()
-        {
-            int nextPlayerId = this.CurrentPlayer.Id + 1;
-
-            var nextPlayer = this.Players.SingleOrDefault(x => x.Id == nextPlayerId);
-            if (nextPlayer == null)
-            {
-                this.CurrentPlayer = this.Players.FirstOrDefault();
-
-                return;
-            }
-
-            this.CurrentPlayer = nextPlayer;
         }
 
         public void InitPlayers()
@@ -87,10 +84,6 @@ namespace Core
             }
 
             this.Players = orderedPlayers;
-
-            var firstPlayer = this.Players.FirstOrDefault();
-
-            this.CurrentPlayer = firstPlayer;
         }
     }
 }

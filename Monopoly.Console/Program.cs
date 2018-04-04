@@ -35,12 +35,30 @@ namespace Monopoly.Console
             engine.InitPlayers();
             engine.Start();
 
+            int i = 0;
             while(engine.IsGameStarted)
             {
-                var result = engine.Play();
+                i++;
 
-                System.Console.WriteLine(result.PlayerType + " -> Steps: " + result.CurrentSteps);
-                System.Console.WriteLine("Balance: " + result.WalletBalance);
+                bool isGameStarted = i > 1;
+                engine.Play(isGameStarted);
+
+                var results = engine.GetProgress();
+                foreach (var result in results)
+                {
+                    System.Console.WriteLine(result.PlayerType + " -> Steps: " + result.CurrentSteps + " Area: " + result.AreaName);
+                    System.Console.WriteLine(result.Message);
+                    System.Console.WriteLine("Balance: " + result.WalletBalance);
+
+                    System.Console.WriteLine();
+                }
+
+                System.Console.WriteLine(playerOne.PlayerType + " Balance: "  + playerOne.WalletBalance);
+                System.Console.WriteLine(playerTwo.PlayerType + " Balance: " + playerTwo.WalletBalance);
+
+                System.Console.WriteLine();
+
+                System.Console.WriteLine("Press Enter to continue...");
 
                 System.Console.ReadLine();
             }

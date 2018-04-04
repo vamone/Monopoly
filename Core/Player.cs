@@ -13,6 +13,7 @@ namespace Core
         public Player()
         {
             this.WalletBalance = _defaultWalletBalance;
+            this.CurrentPositionId = 0;
         }
 
         public int Id { get; set; }
@@ -24,6 +25,8 @@ namespace Core
         public int CurrentSteps { get; protected set; }
 
         public Area CurrentPosition { get; protected set; }
+
+        public int CurrentPositionId { get; protected set; }
 
         public void CastCubes()
         {
@@ -37,8 +40,18 @@ namespace Core
 
         public Area MoveTo(ICollection<Area> areas)
         {
-            var area = areas.SingleOrDefault(x => x.Id == this.CurrentSteps); //TODO: FIND BETTER LOGIC FOR THAT.
+            int maxAreasPositions = areas.Count();
+
+            int nextPosition = this.CurrentPositionId + this.CurrentSteps + 1;
+
+            if(nextPosition > maxAreasPositions)
+            {
+                nextPosition = nextPosition - maxAreasPositions;
+            }
+
+            var area = areas.SingleOrDefault(x => x.Id == nextPosition); //TODO: FIND BETTER LOGIC FOR THAT.
             this.CurrentPosition = area;
+            this.CurrentPositionId = area.Id;
 
             return area;
         }

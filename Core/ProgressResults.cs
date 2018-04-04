@@ -13,5 +13,9 @@ namespace Core
         public int WalletBalance { get; set; }
 
         public int CurrentSteps { get; set; }
+
+        public string AreaName { get; set; }
+
+        public string Message { get; set; }
     }
 }

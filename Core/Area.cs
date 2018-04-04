@@ -19,6 +19,8 @@ namespace Core
 
         public int? OwnerId { get; set; }
 
+        public Player Owner { get; set; }
+
         public int BuyAmount { get; set; }
 
         public AreaType AreaType { get; set; }
