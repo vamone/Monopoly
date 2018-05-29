@@ -60,7 +60,7 @@ namespace Monopoly.Console
 
                 System.Console.WriteLine("Press Enter to continue...");
 
-                System.Console.ReadLine();
+                //System.Console.ReadLine();
             }
 
             System.Console.ReadLine();
